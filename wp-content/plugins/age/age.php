@@ -45,18 +45,28 @@ function add_age_field( $user ) {
 <?php
 }
 
+
+
+
+// /////////////////
 function save_custom_user_profile_fields( $user_id ) {
+    global $error;
   if(!current_user_can('manage_options')){
     return false;}
   else{
-    update_user_meta($user_id, 'age', $_POST['age']);
+    if($_POST['age'] < 1) {
+       $error = new WP_Error();
+      $error->add('age',  __("age must be positive"));
+      echo '<div class="error"><p>' . $error->get_error_message('age') . '</p></div>';  
+    }
+    else{
+
+      update_user_meta($user_id, 'age', $_POST['age']);
+    }
   }
 }
 add_action('user_register', 'save_custom_user_profile_fields');
 add_action( 'personal_options_update', 'save_custom_user_profile_fields' );
 add_action( 'edit_user_profile_update', 'save_custom_user_profile_fields' );
-
-
-
 
 
